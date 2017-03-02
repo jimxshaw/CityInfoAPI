@@ -6,16 +6,22 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CityInfo.API.Controllers
 {
+    [Route("api/cities")]
     public class CitiesController : Controller
     {
-        [HttpGet("api/cities")]
+        [HttpGet()]
         public JsonResult GetCities()
         {
-            return new JsonResult(new List<object>()
-            {
-                new { Id = 1, Name = "Dallas" },
-                new { Id = 2, Name = "Seattle" }
-            });
+            return new JsonResult(CitiesDataStore.Current.Cities);
+        }
+
+        [HttpGet("{id}")]
+        public JsonResult GetCity(int id)
+        {
+
+            return new JsonResult(CitiesDataStore.Current
+                                                 .Cities
+                                                 .FirstOrDefault(c => c.Id == id));
         }
     }
 }
