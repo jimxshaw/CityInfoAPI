@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CityInfo.API.Models;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CityInfo.API.Controllers
@@ -124,6 +125,62 @@ namespace CityInfo.API.Controllers
             pointOfInterestFromStore.Description = pointOfInterest.Description;
 
             // This means the request completed successfully but there's nothing to return.
+            return NoContent();
+        }
+
+        [HttpPatch("{cityId}/pointsofinterest/{id}")]
+        public IActionResult PartiallyUpdatePointOfInterest(int cityId, int id, [FromBody] JsonPatchDocument<PointOfInterestForUpdateDto> patchDoc)
+        {
+            if (patchDoc == null)
+            {
+                return BadRequest();
+            }
+
+            var city = CitiesDataStore.Current.Cities.FirstOrDefault(c => c.Id == cityId);
+
+            if (city == null)
+            {
+                return NotFound();
+            }
+
+            var pointOfInterestFromStore = city.PointsOfInterest.FirstOrDefault(p => p.Id == id);
+
+            if (pointOfInterestFromStore == null)
+            {
+                return NotFound();
+            }
+
+            var pointOfInterestToPatch = new PointOfInterestForUpdateDto()
+            {
+                Name = pointOfInterestFromStore.Name,
+                Description = pointOfInterestFromStore.Description
+            };
+
+            // The ModelState also needs to be passed in so that its validation rules can be
+            // applied to the soon-to-be-patched object.
+            patchDoc.ApplyTo(pointOfInterestToPatch, ModelState);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (pointOfInterestToPatch.Name == pointOfInterestToPatch.Description)
+            {
+                ModelState.AddModelError("Description", "The description should be different from the name");
+            }
+
+            // We have to validate a second time after the object has been applied to the patch document.
+            TryValidateModel(pointOfInterestToPatch);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            pointOfInterestFromStore.Name = pointOfInterestToPatch.Name;
+            pointOfInterestFromStore.Description = pointOfInterestToPatch.Description;
+
             return NoContent();
         }
     }
