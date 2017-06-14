@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace CityInfo.API.Models
 {
-    public class PointOfInterestForCreationDto
+    public class PointOfInterestDto
     {
-        [Required(ErrorMessage = "Point of interest name is required.")]
-        [MaxLength(50)]
+        public int Id { get; set; }
+
         public string Name { get; set; }
 
-        [MaxLength(200)]
         public string Description { get; set; }
+
     }
 }

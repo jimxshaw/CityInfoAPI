@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CityInfo.API.Models;
+﻿using CityInfo.API.Models;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace CityInfo.API.Controllers
 {
@@ -54,7 +55,7 @@ namespace CityInfo.API.Controllers
 
             if (pointOfInterest.Name == pointOfInterest.Description)
             {
-                ModelState.AddModelError("Description", "The description should be different from the name");
+                ModelState.AddModelError("Description", "The Description should be different from the Name.");
             }
 
             if (!ModelState.IsValid)
@@ -69,7 +70,9 @@ namespace CityInfo.API.Controllers
                 return NotFound();
             }
 
-            var maxPointOfInterestId = CitiesDataStore.Current.Cities.SelectMany(c => c.PointsOfInterest).Max(p => p.Id);
+            var maxPointOfInterestId = CitiesDataStore.Current.Cities
+                                                              .SelectMany(c => c.PointsOfInterest)
+                                                              .Max(p => p.Id);
 
             var finalPointOfInterest = new PointOfInterestDto()
             {
@@ -80,13 +83,7 @@ namespace CityInfo.API.Controllers
 
             city.PointsOfInterest.Add(finalPointOfInterest);
 
-            return CreatedAtRoute("GetPointOfInterest",
-                                    new
-                                    {
-                                        cityId = cityId,
-                                        id = finalPointOfInterest.Id
-                                    },
-                                    finalPointOfInterest);
+            return CreatedAtRoute("GetPointOfInterest", new { cityId = cityId, id = finalPointOfInterest.Id }, finalPointOfInterest);
         }
 
         [HttpPut("{cityId}/pointsofinterest/{id}")]
@@ -99,7 +96,7 @@ namespace CityInfo.API.Controllers
 
             if (pointOfInterest.Name == pointOfInterest.Description)
             {
-                ModelState.AddModelError("Description", "The description should be different from the name");
+                ModelState.AddModelError("Description", "The Description should be different from the Name.");
             }
 
             if (!ModelState.IsValid)
@@ -124,7 +121,6 @@ namespace CityInfo.API.Controllers
             pointOfInterestFromStore.Name = pointOfInterest.Name;
             pointOfInterestFromStore.Description = pointOfInterest.Description;
 
-            // This means the request completed successfully but there's nothing to return.
             return NoContent();
         }
 
@@ -156,8 +152,6 @@ namespace CityInfo.API.Controllers
                 Description = pointOfInterestFromStore.Description
             };
 
-            // The ModelState also needs to be passed in so that its validation rules can be
-            // applied to the soon-to-be-patched object.
             patchDoc.ApplyTo(pointOfInterestToPatch, ModelState);
 
             if (!ModelState.IsValid)
@@ -167,10 +161,9 @@ namespace CityInfo.API.Controllers
 
             if (pointOfInterestToPatch.Name == pointOfInterestToPatch.Description)
             {
-                ModelState.AddModelError("Description", "The description should be different from the name");
+                ModelState.AddModelError("Description", "The Description should be different from the Name.");
             }
 
-            // We have to validate a second time after the object has been applied to the patch document.
             TryValidateModel(pointOfInterestToPatch);
 
             if (!ModelState.IsValid)
