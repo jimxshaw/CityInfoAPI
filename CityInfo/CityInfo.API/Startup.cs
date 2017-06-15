@@ -30,7 +30,8 @@ namespace CityInfo.API
                                 // sets precedence. If settings appear in two files then the
                                 // most later file wins.
                                 .AddJsonFile("appSettings.json", optional: false, reloadOnChange: true)
-                                .AddJsonFile($"appSettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
+                                .AddJsonFile($"appSettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                                .AddEnvironmentVariables();
 
             Configuration = builder.Build();
         }
