@@ -25,7 +25,8 @@ namespace CityInfo.API.Entities
         {
             // The Database object is defined on DbContext.
             // If the db exists, nothing happens. If the db doesn't exist, it 
-            // will be created.
+            // will be created wherever this context is injected (typically 
+            // by constructor injection is a controller).
             Database.EnsureCreated();
         }
     }
