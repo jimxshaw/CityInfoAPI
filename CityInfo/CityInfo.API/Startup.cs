@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using NLog.Extensions.Logging;
 using CityInfo.API.Services;
 using Microsoft.Extensions.Configuration;
+using CityInfo.API.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace CityInfo.API
 {
@@ -55,6 +57,10 @@ namespace CityInfo.API
 #else
             services.AddTransient<IMailService, CloudMailService>();
 #endif
+
+            // The add db context method only exists after the EF Core Sql Server Nuget package is added.
+            var connectionString = Configuration["connectionStrings:cityInfoDbConnectionString"];
+            services.AddDbContext<CityInfoContext>(opt => opt.UseSqlServer(connectionString));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
