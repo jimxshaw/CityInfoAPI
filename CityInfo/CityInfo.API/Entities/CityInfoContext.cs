@@ -27,7 +27,11 @@ namespace CityInfo.API.Entities
             // If the db exists, nothing happens. If the db doesn't exist, it 
             // will be created wherever this context is injected (typically 
             // by constructor injection is a controller).
-            Database.EnsureCreated();
+            //Database.EnsureCreated();
+
+            // The Migrate method is a substitute for issuing the Update-Database
+            // command in Package Manager Console.
+            Database.Migrate();
         }
     }
 }
