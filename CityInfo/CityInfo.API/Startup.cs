@@ -24,7 +24,11 @@ namespace CityInfo.API
         {
             var builder = new ConfigurationBuilder()
                                 .SetBasePath(env.ContentRootPath)
-                                .AddJsonFile("appSettings.json", optional: false, reloadOnChange: true);
+                                // The order of which settings files is applied matter as it
+                                // sets precedence. If settings appear in two files then the
+                                // most later file wins.
+                                .AddJsonFile("appSettings.json", optional: false, reloadOnChange: true)
+                                .AddJsonFile($"appSettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
 
             Configuration = builder.Build();
         }
