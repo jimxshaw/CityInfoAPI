@@ -106,7 +106,8 @@ namespace CityInfo.API
                 // object to the same properties on the destination object.
                 // If the property doesn't exist then it will be ignored.
                 config.CreateMap<City, CityWithoutPointsOfInterestDto>();
-
+                config.CreateMap<City, CityDto>();
+                config.CreateMap<PointOfInterest, PointOfInterestDto>();
             });
 
             app.UseMvc();

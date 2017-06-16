@@ -1,4 +1,6 @@
-﻿using CityInfo.API.Models;
+﻿using AutoMapper;
+using CityInfo.API.Entities;
+using CityInfo.API.Models;
 using CityInfo.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -27,17 +29,7 @@ namespace CityInfo.API.Controllers
             // Database entities should not be returned within the response body.
             // An intermediary object, a DTO, specifically tailored for a response
             // should be returned instead.
-            var results = new List<CityWithoutPointsOfInterestDto>();
-
-            foreach (var entity in cityEntities)
-            {
-                results.Add(new CityWithoutPointsOfInterestDto
-                {
-                    Id = entity.Id,
-                    Name = entity.Name,
-                    Description = entity.Description
-                });
-            }
+            var results = Mapper.Map<IEnumerable<CityWithoutPointsOfInterestDto>>(cityEntities);
 
             return Ok(results);
         }
@@ -54,32 +46,12 @@ namespace CityInfo.API.Controllers
 
             if (includePointsOfInterest)
             {
-                var cityResult = new CityDto()
-                {
-                    Id = cityEntity.Id,
-                    Name = cityEntity.Name,
-                    Description = cityEntity.Description
-                };
-
-                foreach (var pointOfInterest in cityEntity.PointsOfInterest)
-                {
-                    cityResult.PointsOfInterest.Add(new PointOfInterestDto
-                    {
-                        Id = pointOfInterest.Id,
-                        Name = pointOfInterest.Name,
-                        Description = pointOfInterest.Description
-                    });
-                }
+                var cityResult = Mapper.Map<CityDto>(cityEntity);
 
                 return Ok(cityResult);
             }
 
-            var cityWithoutPointsOfInterestResult = new CityWithoutPointsOfInterestDto()
-            {
-                Id = cityEntity.Id,
-                Name = cityEntity.Name,
-                Description = cityEntity.Description
-            };
+            var cityWithoutPointsOfInterestResult = Mapper.Map<CityWithoutPointsOfInterestDto>(cityEntity);
 
             return Ok(cityWithoutPointsOfInterestResult);
         }
