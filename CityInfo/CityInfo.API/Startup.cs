@@ -53,7 +53,9 @@ namespace CityInfo.API
             //});
 
 #if DEBUG
-
+            // Transient: service is created every time it's requested.
+            // Scoped: service is created once per request.
+            // Singleton: service is created the first time it's requested.
             services.AddTransient<IMailService, LocalMailService>();
 #else
             services.AddTransient<IMailService, CloudMailService>();
@@ -62,6 +64,9 @@ namespace CityInfo.API
             // The add db context method only exists after the EF Core Sql Server Nuget package is added.
             var connectionString = Configuration["connectionStrings:cityInfoDbConnectionString"];
             services.AddDbContext<CityInfoContext>(opt => opt.UseSqlServer(connectionString));
+
+            // Repositories are best used with scoped lifetime.
+            services.AddScoped<ICityInfoRepository, CityInfoRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

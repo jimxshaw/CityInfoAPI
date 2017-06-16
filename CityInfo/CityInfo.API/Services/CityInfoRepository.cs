@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CityInfo.API.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace CityInfo.API.Services
 {
@@ -18,22 +19,38 @@ namespace CityInfo.API.Services
 
         public IEnumerable<City> GetCities()
         {
-            throw new NotImplementedException();
+            return _context.Cities
+                           .OrderBy(c => c.Name)
+                           .ToList();
         }
 
-        public City GetCity(int cityId)
+        public City GetCity(int cityId, bool includePointsOfInterest)
         {
-            throw new NotImplementedException();
+            if (includePointsOfInterest)
+            {
+                return _context.Cities
+                               .Include(c => c.PointsOfInterest)
+                               .FirstOrDefault(c => c.Id == cityId);
+            }
+
+            return _context.Cities
+                           .FirstOrDefault(c => c.Id == cityId);
+        }
+
+        public IEnumerable<PointOfInterest> GetPointsOfInterestForCity(int cityId)
+        {
+            return _context.PointsOfInterest
+                           .Where(p => p.CityId == cityId)
+                           .ToList();
         }
 
         public PointOfInterest GetPointOfInterestForCity(int cityId, int pointOfInterestId)
         {
-            throw new NotImplementedException();
+            return _context.PointsOfInterest
+                           .FirstOrDefault(p => p.CityId == cityId
+                                                && p.Id == pointOfInterestId);
         }
 
-        public IEnumerable<PointOfInterest> GetPointsOfInterest(int cityId)
-        {
-            throw new NotImplementedException();
-        }
+
     }
 }
