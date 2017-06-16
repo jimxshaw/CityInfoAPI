@@ -14,6 +14,8 @@ using CityInfo.API.Services;
 using Microsoft.Extensions.Configuration;
 using CityInfo.API.Entities;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using CityInfo.API.Models;
 
 namespace CityInfo.API
 {
@@ -96,6 +98,16 @@ namespace CityInfo.API
             cityInfoContext.EnsureSeedDataForContext();
 
             app.UseStatusCodePages();
+
+            // Configure AutoMapper to map our db entities to our dtos.
+            Mapper.Initialize(config =>
+            {
+                // AutoMapper automatically maps the properties from the source
+                // object to the same properties on the destination object.
+                // If the property doesn't exist then it will be ignored.
+                config.CreateMap<City, CityWithoutPointsOfInterestDto>();
+
+            });
 
             app.UseMvc();
 
